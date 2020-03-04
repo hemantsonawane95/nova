@@ -326,6 +326,7 @@ class PciDeviceStats(object):
         # Firstly, let's exclude all devices that don't match our spec (e.g.
         # they've got different PCI IDs or something)
         matching_pools = self._filter_pools_for_spec(pools, request.spec)
+        LOG.debug('Got matching_pools: %r', matching_pools)
 
         # Next, let's exclude all devices that aren't on the correct NUMA node
         # *assuming* we have devices and care about that, as determined by
@@ -337,11 +338,13 @@ class PciDeviceStats(object):
 
             matching_pools = self._filter_pools_for_numa_cells(matching_pools,
                 numa_cells, numa_policy, count)
+            LOG.debug('Got matching_pools: %r', matching_pools)
 
         # Finally, if we're not requesting PFs then we should not use these.
         # Exclude them.
         matching_pools = self._filter_non_requested_pfs(matching_pools,
                                                         request)
+        LOG.debug('Got matching_pools: %r', matching_pools)
 
         # Do we still have any devices left?
         if sum([pool['count'] for pool in matching_pools]) < count:
